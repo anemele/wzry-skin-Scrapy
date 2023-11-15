@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 import scrapy
 from scrapy import Request
@@ -20,10 +21,10 @@ class SkinSpider(scrapy.Spider):
 
         for hero in heroinfo:
             heropage = API_HEROPAGE.format(hero_id=hero.ename)
-            yield Request(heropage, callback=self.parse_page, cb_kwargs={'hero': hero})
+            yield Request(heropage, callback=self.parse_page, cb_kwargs=dict(hero=hero))
 
     def parse_page(self, response: Response, **cb):
-        hero: HeroInfo = cb.get('hero')
+        hero: Optional[HeroInfo] = cb.get('hero')
         if hero is None:
             raise ValueError(f'expect {HeroInfo}')
 
@@ -42,7 +43,9 @@ class SkinSpider(scrapy.Spider):
                 continue
 
             skinurl = API_SKINURL.format(hero_id=hero.ename, skin_id=sid)
-            yield Request(skinurl, callback=self.save_imag, cb_kwargs={'path': skinpath})
+            yield Request(
+                skinurl, callback=self.save_imag, cb_kwargs=dict(path=skinpath)
+            )
 
     def save_imag(self, response: Response, **cb):
-        yield {'data': response.body, 'path': cb.get('path')}
+        yield dict(data=response.body, path=cb.get('path'))

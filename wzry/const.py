@@ -14,6 +14,6 @@ if SAVE_PATH_FILE.exists():
     _c = SAVE_PATH_FILE.read_text(encoding='utf-8')
     ROOT_PATH = _Path(_c)
 else:
-    ROOT_PATH = _Path('wzry-skin-imag')
+    ROOT_PATH = _Path('./wzry-skin-imag')
 if not ROOT_PATH.exists():
     ROOT_PATH.mkdir()
